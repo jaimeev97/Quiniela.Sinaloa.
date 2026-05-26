@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiniela Sinaloa Digital</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: #00264d;
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 10px;
+      }
+
+      .container {
+        max-width: 450px;
+        margin: auto;
+        /* Imagen de fondo de fútbol */
+        background: linear-gradient(
+            rgba(0, 64, 128, 0.85),
+            rgba(0, 64, 128, 0.85)
+          ),
+          url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1000&auto=format&fit=crop");
+        background-size: cover;
+        background-position: center;
+        padding: 15px;
+        border-radius: 15px;
+        border: 2px solid #0059b3;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        color: #ffffff;
+        margin-bottom: 5px;
+        font-size: 1.5em;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .bolsa {
+        background: #f1c40f;
+        color: #000;
+        font-weight: bold;
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.85em;
+      }
+
+      .partido {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(26, 82, 118, 0.9);
+        margin: 6px 0;
+        padding: 12px;
+        border-radius: 8px;
+        border-bottom: 3px solid #154360;
+      }
+      .equipo {
+        width: 32%;
+        font-weight: bold;
+        font-size: 0.85em;
+        text-transform: uppercase;
+        text-shadow: 1px 1px 2px black;
+      }
+
+      .opciones {
+        display: flex;
+        gap: 8px;
+      }
+      button.btn-opc {
+        background: #ffffff;
+        border: none;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-weight: bold;
+        color: #333;
+        transition: 0.2s;
+      }
+
+      button.active {
+        background: #e74c3c !important;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0px 0px 8px #e74c3c;
+      }
+
+      /* Inputs del mismo tamaño y legibles */
+      input#nombre,
+      input#goles {
+        width: 100%;
+        padding: 15px 5px;
+        margin-top: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.85em;
+        text-align: center;
+        box-sizing: border-box;
+        display: block;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      input#goles {
+        background-color: #fff9c4;
+        color: #333;
+        border: 2px solid #f1c40f;
+      }
+      input#nombre {
+        background-color: #ffffff;
+        color: #333;
+      }
+
+      .enviar-btn {
+        background: #25d366;
+        color: white;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-top: 15px;
+        cursor: pointer;
+        box-shadow: 0px 4px 0px #1e7e34;
+      }
+      .enviar-btn:active {
+        transform: translateY(3px);
+        box-shadow: none;
+      }
+
+      /* Botón borrar en rojo */
+      .reset-btn {
+        background: #c0392b;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 0.9em;
+        font-weight: bold;
+        margin-top: 10px;
+        cursor: pointer;
+        box-shadow: 0px 4px 0px #922b21;
+      }
+      .reset-btn:active {
+        transform: translateY(3px);
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>⚽ QUINIELA SINALOA ⚽</h1>
+      <div class="bolsa">PRECIO: $25 PESOS</div>
+      <div class="bolsa">TRANSFERENCIAS: 4189143292297028</div>
+      <div class="bolsa">LIMITE DE REGISTRO VIERNES A LAS 11 PM</div>
+
+      <div id="lista-partidos"></div>
+
+      <input
+        type="number"
+        id="goles"
+        placeholder="TOTAL DE GOLES EN LOS 10 PARTIDOS"
+        min="0"
+      />
+      <input type="text" id="nombre" placeholder="ESCRIBE TU NOMBRE AQUÍ" />
+
+      <button class="enviar-btn" onclick="enviarWhatsApp()">
+        ENVIAR QUINIELA POR WHATSAPP 📱
+      </button>
+      <button class="reset-btn" onclick="reiniciarQuiniela()">
+        BORRAR TODO 🗑️
+      </button>
+    </div>
+
+    <script>
+      const partidos = [
+        ["PSG", "Arsenal"],
+        ["toluca", "tigres"],
+        ["México", "Australia"],
+        ["Polonia", "Ucrania"],
+        ["República checa", "Kosovo"],
+        ["ecuador", "Arabia saudita"],
+        ["Gremio", "Corinthians"],
+        ["Bahia", "Botafogo RJ"],
+        ["Santos fc", "Vitoria"],
+        ["Vasco de gama", "Atlético MG"],
+      ];
+
+      let selecciones = new Array(partidos.length).fill(null);
+
+      function renderPartidos() {
+        const container = document.getElementById("lista-partidos");
+        container.innerHTML = partidos
+          .map(
+            (p, i) => `
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <div class="partido">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <span class="equipo">${p[0]}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <div class="opciones">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <button class="btn-opc" onclick="seleccionar(${i}, 'L', this)">L</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <button class="btn-opc" onclick="seleccionar(${i}, 'E', this)">E</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <button class="btn-opc" onclick="seleccionar(${i}, 'V', this)">V</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <span class="equipo">${p[1]}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `
+          )
+          .join("");
+      }
+
+      function seleccionar(index, valor, el) {
+        selecciones[index] = valor;
+        const hermanos = el.parentElement.querySelectorAll(".btn-opc");
+        hermanos.forEach((btn) => btn.classList.remove("active"));
+        el.classList.add("active");
+      }
+
+      function reiniciarQuiniela() {
+        if (confirm("¿Seguro que quieres borrar todo?")) {
+          selecciones.fill(null);
+          document.getElementById("nombre").value = "";
+          document.getElementById("goles").value = "";
+          document
+            .querySelectorAll(".btn-opc")
+            .forEach((btn) => btn.classList.remove("active"));
+        }
+      }
+
+      function enviarWhatsApp() {
+        const nombre = document
+          .getElementById("nombre")
+          .value.trim()
+          .toUpperCase();
+        const totalGoles = document.getElementById("goles").value;
+        const numeroWhatsApp = "526681626270";
+
+        if (selecciones.includes(null)) {
+          alert("⚠️ Te faltan partidos.");
+          return;
+        }
+        if (!totalGoles || !nombre) {
+          alert("⚠️ Completa nombre y goles.");
+          return;
+        }
+
+        const resultados = selecciones
+          .map((res, i) => `${i + 1}:${res}`)
+          .join(" | ");
+        const mensaje = `*🏆 QUINIELA SINALOA 🏆*%0A%0A*👤Nombre:* ${nombre}%0A*⚽Goles:* ${totalGoles}%0A*📝Predicciones:*%0A${resultados}`;
+
+        window.open(
+          `https://wa.me/${numeroWhatsApp}?text=${mensaje}`,
+          "_blank"
+        );
+      }
+
+      renderPartidos();
+    </script>
+  </body>
+</html>
